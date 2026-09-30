@@ -12,12 +12,14 @@ public class ProductDto {
     private String description;
     private BigDecimal price;
     private UUID categoryId;
+    private int quantity;
 
-    public ProductDto(UUID id, String name, String description, BigDecimal price, UUID categoryId) {
+    public ProductDto(UUID id, String name, String description, BigDecimal price, UUID categoryId, int quantity) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.categoryId = categoryId;
+        this.quantity = quantity;
     }
 }

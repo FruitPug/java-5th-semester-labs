@@ -16,7 +16,8 @@ public class ProductMapper {
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getCategory().getId()
+                product.getCategory().getId(),
+                product.getQuantity()
         );
     }
 
@@ -26,17 +27,19 @@ public class ProductMapper {
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
-                request.getCategory()
+                request.getCategory(),
+                request.getQuantity()
         );
     }
 
     public static Product toDomain(UpdateProductRequest request) {
         return new Product(
-                UUID.randomUUID(),
+                request.getId(),
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
-                request.getCategory()
+                request.getCategory(),
+                request.getQuantity()
         );
     }
 }

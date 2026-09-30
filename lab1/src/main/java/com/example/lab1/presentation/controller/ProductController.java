@@ -1,6 +1,7 @@
 package com.example.lab1.presentation.controller;
 
 import com.example.lab1.application.dto.request.CreateProductRequest;
+import com.example.lab1.application.dto.request.UpdateProductRequest;
 import com.example.lab1.application.dto.response.ProductDto;
 import com.example.lab1.application.service.ProductService;
 import jakarta.validation.Valid;
@@ -34,6 +35,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+    @PatchMapping
+    public ResponseEntity<ProductDto> update(@Valid @RequestBody UpdateProductRequest productDto) {
+        return ResponseEntity.ok(productService.updateProduct(productDto));
     }
 
     @DeleteMapping("/{id}")

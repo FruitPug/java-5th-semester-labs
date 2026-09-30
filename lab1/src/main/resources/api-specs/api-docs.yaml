@@ -41,6 +41,23 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ProductDto"
+    patch:
+      tags:
+      - product-controller
+      operationId: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductDto"
   /api/products/{id}:
     get:
       tags:
@@ -120,6 +137,34 @@ components:
         categoryId:
           type: string
           format: uuid
+        quantity:
+          type: integer
+          format: int32
+    UpdateProductRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0.01
+        category:
+          $ref: "#/components/schemas/Category"
+        quantity:
+          type: integer
+          format: int32
+          minimum: 0
+      required:
+      - category
+      - id
+      - name
+      - price
     Pageable:
       type: object
       properties:
@@ -175,14 +220,14 @@ components:
           format: int64
         sort:
           $ref: "#/components/schemas/SortObject"
-        pageNumber:
-          type: integer
-          format: int32
+        paged:
+          type: boolean
         pageSize:
           type: integer
           format: int32
-        paged:
-          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
         unpaged:
           type: boolean
     SortObject:
