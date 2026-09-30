@@ -1,0 +1,46 @@
+package com.example.lab1.infrastructure.repository;
+
+import com.example.lab1.domain.model.Product;
+import com.example.lab1.domain.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public class ProductRepositoryInMemoryImpl implements ProductRepository {
+
+    private final Map<UUID, Product> products = new HashMap<>();
+
+    @Override
+    public Product save(Product product) {
+        products.put(product.getId(), product);
+        return product;
+    }
+
+    @Override
+    public Page<Product> findAll(Pageable pageable) {
+        return new PageImpl<>(products.values().stream().toList());
+    }
+
+    @Override
+    public Optional<Product> findById(UUID id) {
+        return Optional.ofNullable(products.get(id));
+    }
+
+    @Override
+    public Product update(Product product) {
+        products.put(product.getId(), product);
+        return product;
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        products.remove(id);
+    }
+}

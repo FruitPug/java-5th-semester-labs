@@ -1,0 +1,50 @@
+package com.example.lab1.application.dto.request;
+
+import com.example.lab1.domain.model.Category;
+import com.example.lab1.presentation.validation.CosmicWordCheck;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.math.BigDecimal;
+
+@Data
+public class UpdateProductRequest {
+    @CosmicWordCheck
+    @NotBlank
+    private String name;
+
+    private String description;
+
+    @NotNull
+    @DecimalMin("0.01")
+    private BigDecimal price;
+
+    @NotNull
+    private Category category;
+
+    @Min(0)
+    private int quantity;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+}
