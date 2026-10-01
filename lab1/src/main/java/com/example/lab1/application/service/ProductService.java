@@ -39,7 +39,9 @@ public class ProductService {
     }
 
     public ProductDto getProductById(UUID id) {
-        return productRepository.findById(id).map(productMapper::toDto).orElse(null);
+        return productRepository.findById(id).map(productMapper::toDto)
+                .orElseThrow(() ->
+                        new ProductNotFoundException(id));
     }
 
     public ProductDto updateProduct(UpdateProductRequest updateProductRequest, UUID id) {
