@@ -16,14 +16,15 @@ import java.util.UUID;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     public CategoryDto createCategory(CreateCategoryRequest request) {
-        Category category = CategoryMapper.toDomain(request);
-        return CategoryMapper.toDto(categoryRepository.save(category));
+        Category category = categoryMapper.toDomain(request);
+        return categoryMapper.toDto(categoryRepository.save(category));
     }
 
     public CategoryDto getCategoryById(UUID id) {
-        return CategoryMapper.toDto(categoryRepository.findById(id)
+        return categoryMapper.toDto(categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id))
         );
     }

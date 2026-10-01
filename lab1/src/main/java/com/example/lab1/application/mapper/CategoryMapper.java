@@ -3,21 +3,15 @@ package com.example.lab1.application.mapper;
 import com.example.lab1.application.dto.request.CreateCategoryRequest;
 import com.example.lab1.application.dto.response.CategoryDto;
 import com.example.lab1.domain.model.Category;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
-import java.util.UUID;
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface CategoryMapper {
 
-public class CategoryMapper {
-    public static CategoryDto toDto(Category category) {
-        return CategoryDto.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .build();
-    }
+    CategoryDto toDto(Category category);
 
-    public static Category toDomain(CreateCategoryRequest request) {
-        return Category.builder()
-                .id(UUID.randomUUID())
-                .name(request.getName())
-                .build();
-    }
+    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID())")
+    Category toDomain(CreateCategoryRequest request);
 }

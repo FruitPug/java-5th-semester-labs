@@ -9,6 +9,7 @@ import com.example.lab1.domain.model.Product;
 import com.example.lab1.domain.repository.CategoryRepository;
 import com.example.lab1.domain.repository.ProductRepository;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
+import com.example.lab1.presentation.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,31 +23,36 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductMapper productMapper;
 
     public ProductDto createProduct(CreateProductRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() ->
                         new CategoryNotFoundException(request.getCategoryId()));
 
-        Product product = ProductMapper.toDomain(request, category);
-        return ProductMapper.toDto(productRepository.save(product));
+        Product product = productMapper.toDomain(request, category);
+        return productMapper.toDto(productRepository.save(product));
     }
 
     public Page<ProductDto> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable).map(ProductMapper::toDto);
+        return productRepository.findAll(pageable).map(productMapper::toDto);
     }
 
     public ProductDto getProductById(UUID id) {
-        return productRepository.findById(id).map(ProductMapper::toDto).orElse(null);
+        return productRepository.findById(id).map(productMapper::toDto).orElse(null);
     }
 
     public ProductDto updateProduct(UpdateProductRequest updateProductRequest, UUID id) {
+        productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException(id));
+
         Category category = categoryRepository.findById(updateProductRequest.getCategoryId())
                 .orElseThrow(() ->
                         new CategoryNotFoundException(updateProductRequest.getCategoryId()));
 
-        Product product = ProductMapper.toDomain(updateProductRequest, id, category);
-        return ProductMapper.toDto(productRepository.update(product));
+        Product updatedProduct = productMapper.toDomain(updateProductRequest, id, category);
+        return productMapper.toDto(productRepository.update(updatedProduct));
     }
 
     public void deleteProduct(UUID id) {
