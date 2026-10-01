@@ -1,14 +1,29 @@
 package com.example.lab1.domain.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Getter
 public class Product {
-    private UUID id;
+
+    private final UUID id;
+
+    @Setter
     private String name;
+
+    @Setter
     private String description;
+
+    @Setter
     private BigDecimal price;
+
+    @Setter
     private Category category;
+
+    @Setter
     private Integer quantity;
 
     public Product(UUID id, String name, String description, BigDecimal price, Category category, Integer quantity) {
@@ -20,43 +35,4 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 }
