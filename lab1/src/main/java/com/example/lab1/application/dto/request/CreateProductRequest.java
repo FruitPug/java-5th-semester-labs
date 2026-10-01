@@ -25,5 +25,6 @@ public class CreateProductRequest {
     private UUID categoryId;
 
     @Min(0)
-    private int quantity;
+    @NotNull
+    private Integer quantity;
 }

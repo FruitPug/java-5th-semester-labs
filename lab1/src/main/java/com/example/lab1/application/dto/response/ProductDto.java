@@ -12,9 +12,9 @@ public class ProductDto {
     private String description;
     private BigDecimal price;
     private UUID categoryId;
-    private int quantity;
+    private Integer quantity;
 
-    public ProductDto(UUID id, String name, String description, BigDecimal price, UUID categoryId, int quantity) {
+    public ProductDto(UUID id, String name, String description, BigDecimal price, UUID categoryId, Integer quantity) {
         this.id = id;
         this.name = name;
         this.description = description;

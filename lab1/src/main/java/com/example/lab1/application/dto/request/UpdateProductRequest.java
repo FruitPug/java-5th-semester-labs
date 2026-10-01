@@ -29,5 +29,6 @@ public class UpdateProductRequest {
     private UUID categoryId;
 
     @Min(0)
-    private int quantity;
+    @NotNull
+    private Integer quantity;
 }

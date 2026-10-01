@@ -9,9 +9,9 @@ public class Product {
     private String description;
     private BigDecimal price;
     private Category category;
-    private int quantity;
+    private Integer quantity;
 
-    public Product(UUID id, String name, String description, BigDecimal price, Category category, int quantity) {
+    public Product(UUID id, String name, String description, BigDecimal price, Category category, Integer quantity) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,11 +40,11 @@ public class Product {
         return category;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
