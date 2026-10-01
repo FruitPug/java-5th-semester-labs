@@ -3,6 +3,7 @@ package com.example.lab1.application.mapper;
 import com.example.lab1.application.dto.request.CreateProductRequest;
 import com.example.lab1.application.dto.request.UpdateProductRequest;
 import com.example.lab1.application.dto.response.ProductDto;
+import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.model.Product;
 import org.springframework.stereotype.Component;
 
@@ -21,24 +22,24 @@ public class ProductMapper {
         );
     }
 
-    public static Product toDomain(CreateProductRequest request) {
+    public static Product toDomain(CreateProductRequest request, Category category) {
         return new Product(
                 UUID.randomUUID(),
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
-                request.getCategory(),
+                category,
                 request.getQuantity()
         );
     }
 
-    public static Product toDomain(UpdateProductRequest request) {
+    public static Product toDomain(UpdateProductRequest request, Category category) {
         return new Product(
                 request.getId(),
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
-                request.getCategory(),
+                category,
                 request.getQuantity()
         );
     }

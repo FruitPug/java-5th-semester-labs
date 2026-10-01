@@ -1,6 +1,5 @@
 package com.example.lab1.application.dto.request;
 
-import com.example.lab1.domain.model.Category;
 import com.example.lab1.presentation.validation.CosmicWordCheck;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -9,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class CreateProductRequest {
@@ -23,7 +23,7 @@ public class CreateProductRequest {
     private BigDecimal price;
 
     @NotNull
-    private Category category;
+    private UUID categoryId;
 
     @Min(0)
     private int quantity;
