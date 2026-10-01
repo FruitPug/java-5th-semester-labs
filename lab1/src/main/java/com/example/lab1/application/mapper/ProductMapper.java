@@ -8,8 +8,7 @@ import com.example.lab1.domain.model.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-
-import java.util.UUID;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProductMapper {
@@ -17,13 +16,16 @@ public interface ProductMapper {
     @Mapping(target = "categoryId", source = "category.id")
     ProductDto toDto(Product product);
 
-    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID())")
     @Mapping(target = "category", source = "category")
     @Mapping(target = "name", source = "request.name")
     Product toDomain(CreateProductRequest request, Category category);
 
-    @Mapping(target = "id", source = "id")
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", source = "category")
     @Mapping(target = "name", source = "request.name")
-    Product toDomain(UpdateProductRequest request, UUID id, Category category);
+    Product toDomain(
+            UpdateProductRequest request,
+            Category category,
+            @MappingTarget Product product
+    );
 }

@@ -26,8 +26,8 @@ public class Product {
     @Setter
     private Integer quantity;
 
-    public Product(UUID id, String name, String description, BigDecimal price, Category category, Integer quantity) {
-        this.id = id;
+    public Product(String name, String description, BigDecimal price, Category category, Integer quantity) {
+        this.id = UUID.randomUUID();
         this.name = name;
         this.description = description;
         this.price = price;

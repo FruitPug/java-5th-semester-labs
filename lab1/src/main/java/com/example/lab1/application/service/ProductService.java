@@ -43,7 +43,7 @@ public class ProductService {
     }
 
     public ProductDto updateProduct(UpdateProductRequest updateProductRequest, UUID id) {
-        productRepository.findById(id)
+        Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() ->
                         new ProductNotFoundException(id));
 
@@ -51,8 +51,9 @@ public class ProductService {
                 .orElseThrow(() ->
                         new CategoryNotFoundException(updateProductRequest.getCategoryId()));
 
-        Product updatedProduct = productMapper.toDomain(updateProductRequest, id, category);
-        return productMapper.toDto(productRepository.update(updatedProduct));
+        productMapper.toDomain(updateProductRequest, category, existingProduct);
+
+        return productMapper.toDto(productRepository.update(existingProduct));
     }
 
     public void deleteProduct(UUID id) {
