@@ -40,12 +40,12 @@ public class ProductService {
         return productRepository.findById(id).map(ProductMapper::toDto).orElse(null);
     }
 
-    public ProductDto updateProduct(UpdateProductRequest updateProductRequest) {
+    public ProductDto updateProduct(UpdateProductRequest updateProductRequest, UUID id) {
         Category category = categoryRepository.findById(updateProductRequest.getCategoryId())
                 .orElseThrow(() ->
                         new CategoryNotFoundException(updateProductRequest.getCategoryId()));
 
-        Product product = ProductMapper.toDomain(updateProductRequest, category);
+        Product product = ProductMapper.toDomain(updateProductRequest, id, category);
         return ProductMapper.toDto(productRepository.update(product));
     }
 

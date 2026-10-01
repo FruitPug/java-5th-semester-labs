@@ -10,9 +10,6 @@ import java.util.UUID;
 @Data
 public class UpdateProductRequest {
 
-    @NotNull
-    private UUID id;
-
     @CosmicWordCheck
     @NotBlank
     @Size(min = 2, max = 50)

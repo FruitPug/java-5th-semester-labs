@@ -33,9 +33,9 @@ public class ProductMapper {
         );
     }
 
-    public static Product toDomain(UpdateProductRequest request, Category category) {
+    public static Product toDomain(UpdateProductRequest request, UUID id, Category category) {
         return new Product(
-                request.getId(),
+                id,
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
