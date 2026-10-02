@@ -59,6 +59,10 @@ public class ProductService {
     }
 
     public void deleteProduct(UUID id) {
+        productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException(id));
+
         productRepository.deleteById(id);
     }
 }

@@ -64,6 +64,10 @@ public class ProductRepositoryInMemoryImpl implements ProductRepository {
 
     @Override
     public void deleteById(UUID id) {
+        findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException(id));
+
         products.remove(id);
     }
 }
