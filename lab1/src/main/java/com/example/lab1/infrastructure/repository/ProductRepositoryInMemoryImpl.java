@@ -7,15 +7,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public class ProductRepositoryInMemoryImpl implements ProductRepository {
 
-    private final Map<UUID, Product> products = new HashMap<>();
+    private final Map<UUID, Product> products = new LinkedHashMap<>();
 
     @Override
     public Product save(Product product) {
@@ -25,7 +22,28 @@ public class ProductRepositoryInMemoryImpl implements ProductRepository {
 
     @Override
     public Page<Product> findAll(Pageable pageable) {
-        return new PageImpl<>(products.values().stream().toList());
+        List<Product> allProducts = products.values().stream().toList();
+
+        int totalElements = allProducts.size();
+        int start = (int) pageable.getOffset();
+
+        if (start >= totalElements) {
+            return new PageImpl<>(
+                    List.of(),
+                    pageable,
+                    totalElements
+            );
+        }
+
+        int end = Math.min(start + pageable.getPageSize(), totalElements);
+
+        List<Product> pageContent = allProducts.subList(start, end);
+
+        return new PageImpl<>(
+                pageContent,
+                pageable,
+                totalElements
+        );
     }
 
     @Override
