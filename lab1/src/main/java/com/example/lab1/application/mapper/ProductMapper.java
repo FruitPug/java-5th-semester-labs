@@ -3,43 +3,29 @@ package com.example.lab1.application.mapper;
 import com.example.lab1.application.dto.request.CreateProductRequest;
 import com.example.lab1.application.dto.request.UpdateProductRequest;
 import com.example.lab1.application.dto.response.ProductDto;
+import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.model.Product;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
-import java.util.UUID;
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface ProductMapper {
 
-@Component
-public class ProductMapper {
-    public static ProductDto toDto(Product product) {
-        return new ProductDto(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getCategory().getId(),
-                product.getQuantity()
-        );
-    }
+    @Mapping(target = "categoryId", source = "category.id")
+    ProductDto toDto(Product product);
 
-    public static Product toDomain(CreateProductRequest request) {
-        return new Product(
-                UUID.randomUUID(),
-                request.getName(),
-                request.getDescription(),
-                request.getPrice(),
-                request.getCategory(),
-                request.getQuantity()
-        );
-    }
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "name", source = "request.name")
+    Product toDomain(CreateProductRequest request, Category category);
 
-    public static Product toDomain(UpdateProductRequest request) {
-        return new Product(
-                request.getId(),
-                request.getName(),
-                request.getDescription(),
-                request.getPrice(),
-                request.getCategory(),
-                request.getQuantity()
-        );
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "name", source = "request.name")
+    Product toDomain(
+            UpdateProductRequest request,
+            Category category,
+            @MappingTarget Product product
+    );
 }

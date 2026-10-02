@@ -6,6 +6,63 @@ servers:
 - url: http://localhost:8080
   description: Generated server url
 paths:
+  /api/products/{id}:
+    get:
+      tags:
+      - product-controller
+      operationId: getById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductDto"
+    put:
+      tags:
+      - product-controller
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductDto"
+    delete:
+      tags:
+      - product-controller
+      operationId: deleteById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
   /api/products:
     get:
       tags:
@@ -41,15 +98,16 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ProductDto"
-    patch:
+  /api/categories:
+    post:
       tags:
-      - product-controller
-      operationId: update
+      - category-controller
+      operationId: createCategory
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateProductRequest"
+              $ref: "#/components/schemas/CreateCategoryRequest"
         required: true
       responses:
         "200":
@@ -57,12 +115,12 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/ProductDto"
-  /api/products/{id}:
+                $ref: "#/components/schemas/CategoryDto"
+  /api/categories/{id}:
     get:
       tags:
-      - product-controller
-      operationId: getById
+      - category-controller
+      operationId: getCategoryById
       parameters:
       - name: id
         in: path
@@ -76,52 +134,35 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/ProductDto"
-    delete:
-      tags:
-      - product-controller
-      operationId: deleteById
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      responses:
-        "200":
-          description: OK
+                $ref: "#/components/schemas/CategoryDto"
 components:
   schemas:
-    Category:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-    CreateProductRequest:
+    UpdateProductRequest:
       type: object
       properties:
         name:
           type: string
-          minLength: 1
+          maxLength: 50
+          minLength: 2
         description:
           type: string
+          maxLength: 1000
+          minLength: 0
         price:
           type: number
           minimum: 0.01
-        category:
-          $ref: "#/components/schemas/Category"
+        categoryId:
+          type: string
+          format: uuid
         quantity:
           type: integer
           format: int32
           minimum: 0
       required:
-      - category
+      - categoryId
       - name
       - price
+      - quantity
     ProductDto:
       type: object
       properties:
@@ -140,7 +181,42 @@ components:
         quantity:
           type: integer
           format: int32
-    UpdateProductRequest:
+    CreateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          minLength: 2
+        description:
+          type: string
+          maxLength: 1000
+          minLength: 0
+        price:
+          type: number
+          minimum: 0.01
+        categoryId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          format: int32
+          minimum: 0
+      required:
+      - categoryId
+      - name
+      - price
+      - quantity
+    CreateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          minLength: 3
+      required:
+      - name
+    CategoryDto:
       type: object
       properties:
         id:
@@ -148,23 +224,6 @@ components:
           format: uuid
         name:
           type: string
-          minLength: 1
-        description:
-          type: string
-        price:
-          type: number
-          minimum: 0.01
-        category:
-          $ref: "#/components/schemas/Category"
-        quantity:
-          type: integer
-          format: int32
-          minimum: 0
-      required:
-      - category
-      - id
-      - name
-      - price
     Pageable:
       type: object
       properties:
@@ -220,6 +279,8 @@ components:
           format: int64
         sort:
           $ref: "#/components/schemas/SortObject"
+        unpaged:
+          type: boolean
         paged:
           type: boolean
         pageSize:
@@ -228,14 +289,12 @@ components:
         pageNumber:
           type: integer
           format: int32
-        unpaged:
-          type: boolean
     SortObject:
       type: object
       properties:
         empty:
           type: boolean
-        sorted:
-          type: boolean
         unsorted:
+          type: boolean
+        sorted:
           type: boolean
