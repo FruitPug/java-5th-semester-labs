@@ -2,6 +2,7 @@ package com.example.lab1.infrastructure.repository;
 
 import com.example.lab1.domain.model.Product;
 import com.example.lab1.domain.repository.ProductRepository;
+import com.example.lab1.presentation.exception.ProductNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,10 @@ public class ProductRepositoryInMemoryImpl implements ProductRepository {
 
     @Override
     public Product update(Product product) {
+        findById(product.getId())
+                .orElseThrow(() ->
+                        new ProductNotFoundException(product.getId()));
+
         products.put(product.getId(), product);
         return product;
     }
