@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class CategoryRepositoryImpl implements CategoryRepository {
+public class CategoryRepositoryInMemoryImpl implements CategoryRepository {
 
     private final Map<UUID, Category> categories = new HashMap<>();
 
