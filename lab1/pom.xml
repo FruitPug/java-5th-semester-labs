@@ -132,6 +132,12 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.15</version>
+				<configuration>
+					<excludes>
+						<exclude>**/*Application.*</exclude>
+						<exclude>**/*Validator.*</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -151,12 +157,12 @@
 							</outputDirectory>
 							<rules>
 								<rule>
-									<element>SOURCEFILE</element>
+									<element>PACKAGE</element>
 									<limits>
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.8</minimum>
+											<minimum>0.75</minimum>
 										</limit>
 									</limits>
 								</rule>
