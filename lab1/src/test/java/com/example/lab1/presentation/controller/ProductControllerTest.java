@@ -120,6 +120,38 @@ public class ProductControllerTest {
     }
 
     @Test
+    void getAll_ShouldReturnRequestedPage() {
+        UUID categoryId = UUID.randomUUID();
+
+        ProductDto product = ProductDto.builder()
+                .id(UUID.randomUUID())
+                .name("Galaxy Vacuum")
+                .description("Description")
+                .price(BigDecimal.valueOf(250))
+                .categoryId(categoryId)
+                .quantity(10)
+                .build();
+
+        Pageable pageable = PageRequest.of(1, 1);
+        Page<ProductDto> expectedPage =
+                new PageImpl<>(List.of(product), pageable, 2);
+
+        when(productService.getAllProducts(pageable)).thenReturn(expectedPage);
+
+        ResponseEntity<Page<ProductDto>> response =
+                productController.getAll(pageable);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedPage, response.getBody());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getNumber());
+        assertEquals(1, response.getBody().getSize());
+        assertEquals(2, response.getBody().getTotalElements());
+
+        verify(productService).getAllProducts(pageable);
+    }
+
+    @Test
     void getById_ShouldReturnProductDto() {
         UUID productId = UUID.randomUUID();
         ProductDto expectedDto = ProductDto.builder()
