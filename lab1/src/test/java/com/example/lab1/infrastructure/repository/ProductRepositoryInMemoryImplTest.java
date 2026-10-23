@@ -148,6 +148,7 @@ public class ProductRepositoryInMemoryImplTest {
 
         Optional<Product> found = productRepository.findById(product.getId());
         assertTrue(found.isPresent());
+        assertEquals(product.getId(), found.get().getId());
         assertEquals("Updated Product", found.get().getName());
     }
 
@@ -165,13 +166,18 @@ public class ProductRepositoryInMemoryImplTest {
 
     @Test
     void deleteById_ShouldRemoveProduct_WhenProductExists() {
-        Product product = createProduct("Product 1", "Desc 1", BigDecimal.valueOf(10.0), 5);
-        productRepository.save(product);
+        Product product1 = createProduct("Product 1", "Desc 1", BigDecimal.valueOf(10.0), 5);
+        Product product2 = createProduct("Product 2", "Desc 2", BigDecimal.valueOf(20.0), 4);
+        productRepository.save(product1);
+        productRepository.save(product2);
 
-        productRepository.deleteById(product.getId());
+        productRepository.deleteById(product1.getId());
 
-        Optional<Product> found = productRepository.findById(product.getId());
-        assertTrue(found.isEmpty());
+        Optional<Product> found1 = productRepository.findById(product1.getId());
+        assertTrue(found1.isEmpty());
+        Optional<Product> found2 = productRepository.findById(product2.getId());
+        assertTrue(found2.isPresent());
+        assertEquals(product2, found2.get());
     }
 
     @Test

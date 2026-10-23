@@ -7,15 +7,16 @@ import com.example.lab1.application.service.ProductService;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,13 +25,13 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = ProductController.class)
+@ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
 
-    @Autowired
+    @InjectMocks
     private ProductController productController;
 
-    @MockitoBean
+    @Mock
     private ProductService productService;
 
     @Test
@@ -115,6 +116,38 @@ public class ProductControllerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedPage, response.getBody());
+        verify(productService).getAllProducts(pageable);
+    }
+
+    @Test
+    void getAll_ShouldReturnRequestedPage() {
+        UUID categoryId = UUID.randomUUID();
+
+        ProductDto product = ProductDto.builder()
+                .id(UUID.randomUUID())
+                .name("Galaxy Vacuum")
+                .description("Description")
+                .price(BigDecimal.valueOf(250))
+                .categoryId(categoryId)
+                .quantity(10)
+                .build();
+
+        Pageable pageable = PageRequest.of(1, 1);
+        Page<ProductDto> expectedPage =
+                new PageImpl<>(List.of(product), pageable, 2);
+
+        when(productService.getAllProducts(pageable)).thenReturn(expectedPage);
+
+        ResponseEntity<Page<ProductDto>> response =
+                productController.getAll(pageable);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedPage, response.getBody());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getNumber());
+        assertEquals(1, response.getBody().getSize());
+        assertEquals(2, response.getBody().getTotalElements());
+
         verify(productService).getAllProducts(pageable);
     }
 

@@ -4,16 +4,12 @@ import com.example.lab1.application.dto.request.CreateCategoryRequest;
 import com.example.lab1.application.dto.response.CategoryDto;
 import com.example.lab1.domain.model.Category;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = CategoryMapperImpl.class)
 public class CategoryMapperTest {
 
-    @Autowired
-    private CategoryMapper categoryMapper;
+    private final CategoryMapper categoryMapper = new CategoryMapperImpl();
 
     @Test
     void toDto_ShouldMapCategoryToCategoryDto() {

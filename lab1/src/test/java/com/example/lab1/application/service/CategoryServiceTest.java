@@ -7,26 +7,28 @@ import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.repository.CategoryRepository;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = CategoryService.class)
+@ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
 
-    @Autowired
+    @InjectMocks
     private CategoryService categoryService;
 
-    @MockitoBean
+    @Mock
     private CategoryRepository categoryRepository;
 
-    @MockitoBean
+    @Mock
     private CategoryMapper categoryMapper;
 
     @Test
@@ -46,7 +48,10 @@ public class CategoryServiceTest {
 
         CategoryDto actualDto = categoryService.createCategory(request);
 
-        assertEquals(actualDto, expectedDto);
+        assertEquals(expectedDto, actualDto);
+        verify(categoryMapper).toDomain(request);
+        verify(categoryRepository).save(category);
+        verify(categoryMapper).toDto(category);
     }
 
     @Test
@@ -63,6 +68,8 @@ public class CategoryServiceTest {
         CategoryDto actualDto = categoryService.getCategoryById(category.getId());
 
         assertEquals(expectedDto, actualDto);
+        verify(categoryRepository).findById(category.getId());
+        verify(categoryMapper).toDto(category);
     }
 
     @Test
@@ -77,5 +84,6 @@ public class CategoryServiceTest {
         );
 
         assertTrue(exception.getMessage().contains(randomUUID.toString()));
+        verify( categoryRepository).findById(randomUUID);
     }
 }
