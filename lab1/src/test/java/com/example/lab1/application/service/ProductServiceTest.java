@@ -192,9 +192,9 @@ public class ProductServiceTest {
         when(productRepository.update(updatedProduct)).thenReturn(updatedProduct);
         when(productMapper.toDto(updatedProduct)).thenReturn(expectedDto);
 
-        ProductDto actualProductDto = productService.updateProduct(request, product.getId());
+        ProductDto actualDto = productService.updateProduct(request, product.getId());
 
-        assertEquals(expectedDto, actualProductDto);
+        assertEquals(expectedDto, actualDto);
     }
 
     @Test
