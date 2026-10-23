@@ -47,7 +47,7 @@ public class CategoryServiceTest {
 
         CategoryDto actualDto = categoryService.createCategory(request);
 
-        assertEquals(actualDto, expectedDto);
+        assertEquals(expectedDto, actualDto);
     }
 
     @Test
