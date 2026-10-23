@@ -6,19 +6,15 @@ import com.example.lab1.application.dto.response.ProductDto;
 import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.model.Product;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = ProductMapperImpl.class)
 public class ProductMapperTest {
 
-    @Autowired
-    private ProductMapper productMapper;
+    private final ProductMapper productMapper = new ProductMapperImpl();
 
     @Test
     void toDto_ShouldMapProductToProductDto() {
