@@ -73,6 +73,10 @@ public class ProductServiceTest {
         ProductDto actualDto = productService.createProduct(request);
 
         assertEquals(expectedDto, actualDto);
+        verify(categoryRepository).findById(category.getId());
+        verify(productMapper).toDomain(request, category);
+        verify(productRepository).save(product);
+        verify(productMapper).toDto(product);
     }
 
     @Test
@@ -84,8 +88,6 @@ public class ProductServiceTest {
         request.setPrice(BigDecimal.valueOf(199.99));
         request.setCategoryId(categoryId);
         request.setQuantity(15);
-
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
         CategoryNotFoundException exception = assertThrows(
                 CategoryNotFoundException.class,
@@ -128,6 +130,8 @@ public class ProductServiceTest {
         Page<ProductDto> actualProductsDto = productService.getAllProducts(PageRequest.of(0, 10));
 
         assertEquals(expectedProductsDto, actualProductsDto);
+        verify(productRepository).findAll(any(Pageable.class));
+        verify(productMapper, times(2)).toDto(any(Product.class));
     }
 
     @Test
@@ -150,11 +154,14 @@ public class ProductServiceTest {
         ProductDto actualProductDto = productService.getProductById(product.getId());
 
         assertEquals(expectedProductDto, actualProductDto);
+        verify(productRepository).findById(product.getId());
+        verify(productMapper).toDto(any(Product.class));
     }
 
     @Test
     void getProductById_ShouldThrowProductNotFoundException_WhenProductDoesNotExist() {
         UUID randomUUID = UUID.randomUUID();
+
         when(productRepository.findById(randomUUID)).thenReturn(Optional.empty());
 
         ProductNotFoundException exception = assertThrows(
@@ -163,6 +170,7 @@ public class ProductServiceTest {
         );
 
         assertTrue(exception.getMessage().contains(randomUUID.toString()));
+        verify(productRepository).findById(randomUUID);
     }
 
     @Test
@@ -195,6 +203,11 @@ public class ProductServiceTest {
         ProductDto actualDto = productService.updateProduct(request, product.getId());
 
         assertEquals(expectedDto, actualDto);
+        verify(productRepository).findById(product.getId());
+        verify(categoryRepository).findById(category.getId());
+        verify(productMapper).toDomain(request, category, product);
+        verify(productRepository).update(updatedProduct);
+        verify(productMapper).toDto(updatedProduct);
     }
 
     @Test
@@ -216,6 +229,7 @@ public class ProductServiceTest {
         );
 
         assertTrue(exception.getMessage().contains(productId.toString()));
+        verify(productRepository).findById(productId);
     }
 
     @Test
@@ -239,6 +253,8 @@ public class ProductServiceTest {
         );
 
         assertTrue(exception.getMessage().contains(categoryId.toString()));
+        verify(productRepository).findById(product.getId());
+        verify(categoryRepository).findById(categoryId);
     }
 
     @Test
@@ -266,5 +282,6 @@ public class ProductServiceTest {
         );
 
         assertTrue(exception.getMessage().contains(productId.toString()));
+        verify(productRepository).findById(productId);
     }
 }

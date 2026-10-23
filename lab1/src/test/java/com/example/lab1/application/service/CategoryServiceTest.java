@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +49,9 @@ public class CategoryServiceTest {
         CategoryDto actualDto = categoryService.createCategory(request);
 
         assertEquals(expectedDto, actualDto);
+        verify(categoryMapper).toDomain(request);
+        verify(categoryRepository).save(category);
+        verify(categoryMapper).toDto(category);
     }
 
     @Test
@@ -64,6 +68,8 @@ public class CategoryServiceTest {
         CategoryDto actualDto = categoryService.getCategoryById(category.getId());
 
         assertEquals(expectedDto, actualDto);
+        verify(categoryRepository).findById(category.getId());
+        verify(categoryMapper).toDto(category);
     }
 
     @Test
@@ -78,5 +84,6 @@ public class CategoryServiceTest {
         );
 
         assertTrue(exception.getMessage().contains(randomUUID.toString()));
+        verify( categoryRepository).findById(randomUUID);
     }
 }
