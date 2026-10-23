@@ -148,6 +148,7 @@ public class ProductRepositoryInMemoryImplTest {
 
         Optional<Product> found = productRepository.findById(product.getId());
         assertTrue(found.isPresent());
+        assertEquals(product.getId(), found.get().getId());
         assertEquals("Updated Product", found.get().getName());
     }
 
