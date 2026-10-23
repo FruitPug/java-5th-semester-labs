@@ -184,21 +184,27 @@ public class ProductServiceTest {
         request.setCategoryId(category.getId());
         request.setQuantity(20);
 
-        Product updatedProduct = new Product("Updated Name", "An updated description", BigDecimal.valueOf(299.99), category, 20);
         ProductDto expectedDto = ProductDto.builder()
-                .id(updatedProduct.getId())
-                .name(updatedProduct.getName())
-                .description(updatedProduct.getDescription())
-                .price(updatedProduct.getPrice())
-                .categoryId(updatedProduct.getCategory().getId())
-                .quantity(updatedProduct.getQuantity())
+                .id(product.getId())
+                .name(request.getName())
+                .description(request.getDescription())
+                .price(request.getPrice())
+                .categoryId(request.getCategoryId())
+                .quantity(request.getQuantity())
                 .build();
 
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
         when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
-        when(productMapper.toDomain(request, category, product)).thenReturn(updatedProduct);
-        when(productRepository.update(updatedProduct)).thenReturn(updatedProduct);
-        when(productMapper.toDto(updatedProduct)).thenReturn(expectedDto);
+        when(productMapper.toDomain(request, category, product)).thenAnswer(i -> {
+            product.setName(request.getName());
+            product.setDescription(request.getDescription());
+            product.setPrice(request.getPrice());
+            product.setCategory(category);
+            product.setQuantity(request.getQuantity());
+            return product;
+        });
+        when(productRepository.update(product)).thenReturn(product);
+        when(productMapper.toDto(product)).thenReturn(expectedDto);
 
         ProductDto actualDto = productService.updateProduct(request, product.getId());
 
@@ -206,8 +212,8 @@ public class ProductServiceTest {
         verify(productRepository).findById(product.getId());
         verify(categoryRepository).findById(category.getId());
         verify(productMapper).toDomain(request, category, product);
-        verify(productRepository).update(updatedProduct);
-        verify(productMapper).toDto(updatedProduct);
+        verify(productRepository).update(product);
+        verify(productMapper).toDto(product);
     }
 
     @Test
