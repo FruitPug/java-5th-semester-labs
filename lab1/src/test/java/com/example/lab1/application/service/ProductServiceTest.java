@@ -12,13 +12,14 @@ import com.example.lab1.domain.repository.ProductRepository;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,19 +29,19 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = ProductService.class)
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 
-    @Autowired
+    @InjectMocks
     private ProductService productService;
 
-    @MockitoBean
+    @Mock
     private ProductRepository productRepository;
 
-    @MockitoBean
+    @Mock
     private CategoryRepository categoryRepository;
 
-    @MockitoBean
+    @Mock
     private ProductMapper productMapper;
 
     @Test

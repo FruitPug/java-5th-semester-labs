@@ -5,11 +5,12 @@ import com.example.lab1.application.dto.response.CategoryDto;
 import com.example.lab1.application.service.CategoryService;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.UUID;
 
@@ -18,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = CategoryController.class)
+@ExtendWith(MockitoExtension.class)
 public class CategoryControllerTest {
 
-    @Autowired
+    @InjectMocks
     private CategoryController categoryController;
 
-    @MockitoBean
+    @Mock
     private CategoryService categoryService;
 
     @Test
