@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:18.7
+    container_name: cosmoMP_postgres
+    environment:
+      POSTGRES_DB: cosmoMP
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      TZ: Europe/Kyiv
+    ports:
+      - "5432:5432"
+    volumes:
+      - cosmoMP_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d cosmoMP"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  cosmoMP_data:
