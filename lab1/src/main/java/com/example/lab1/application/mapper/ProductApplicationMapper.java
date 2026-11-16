@@ -11,7 +11,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface ProductMapper {
+public interface ProductApplicationMapper {
 
     @Mapping(target = "categoryId", source = "category.id")
     ProductDto toDto(Product product);
@@ -20,7 +20,6 @@ public interface ProductMapper {
     @Mapping(target = "name", source = "request.name")
     Product toDomain(CreateProductRequest request, Category category);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", source = "category")
     @Mapping(target = "name", source = "request.name")
     Product toDomain(
