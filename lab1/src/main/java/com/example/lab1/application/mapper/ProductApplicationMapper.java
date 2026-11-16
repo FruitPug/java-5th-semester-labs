@@ -16,6 +16,7 @@ public interface ProductApplicationMapper {
     @Mapping(target = "categoryId", source = "category.id")
     ProductDto toDto(Product product);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", source = "category")
     @Mapping(target = "name", source = "request.name")
     Product toDomain(CreateProductRequest request, Category category);
