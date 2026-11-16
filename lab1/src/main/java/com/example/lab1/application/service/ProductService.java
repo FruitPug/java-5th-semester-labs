@@ -3,19 +3,18 @@ package com.example.lab1.application.service;
 import com.example.lab1.application.dto.request.CreateProductRequest;
 import com.example.lab1.application.dto.request.UpdateProductRequest;
 import com.example.lab1.application.dto.response.ProductDto;
-import com.example.lab1.application.mapper.ProductMapper;
+import com.example.lab1.application.mapper.ProductApplicationMapper;
 import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.model.Product;
 import com.example.lab1.domain.repository.CategoryRepository;
 import com.example.lab1.domain.repository.ProductRepository;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +22,9 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final ProductMapper productMapper;
+    private final ProductApplicationMapper productMapper;
 
+    @Transactional
     public ProductDto createProduct(CreateProductRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() ->
@@ -38,13 +38,15 @@ public class ProductService {
         return productRepository.findAll(pageable).map(productMapper::toDto);
     }
 
-    public ProductDto getProductById(UUID id) {
+    @Transactional
+    public ProductDto getProductById(Long id) {
         return productRepository.findById(id).map(productMapper::toDto)
                 .orElseThrow(() ->
                         new ProductNotFoundException(id));
     }
 
-    public ProductDto updateProduct(UpdateProductRequest request, UUID id) {
+    @Transactional
+    public ProductDto updateProduct(UpdateProductRequest request, Long id) {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() ->
                         new ProductNotFoundException(id));
@@ -58,7 +60,8 @@ public class ProductService {
         return productMapper.toDto(productRepository.update(updatedProduct));
     }
 
-    public void deleteProduct(UUID id) {
+    @Transactional
+    public void deleteProduct(Long id) {
         productRepository.findById(id)
                 .orElseThrow(() ->
                         new ProductNotFoundException(id));
