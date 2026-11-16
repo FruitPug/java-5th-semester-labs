@@ -5,7 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Data
 public class UpdateProductRequest {
@@ -23,7 +22,7 @@ public class UpdateProductRequest {
     private BigDecimal price;
 
     @NotNull
-    private UUID categoryId;
+    private Long categoryId;
 
     @Min(0)
     @NotNull

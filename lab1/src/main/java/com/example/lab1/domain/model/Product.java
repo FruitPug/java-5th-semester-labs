@@ -3,12 +3,11 @@ package com.example.lab1.domain.model;
 import lombok.Getter;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Getter
 public class Product {
 
-    private final UUID id;
+    private final Long id;
 
     private String name;
 
@@ -20,8 +19,8 @@ public class Product {
 
     private Integer quantity;
 
-    public Product(String name, String description, BigDecimal price, Category category, Integer quantity) {
-        this.id = UUID.randomUUID();
+    public Product(Long id, String name, String description, BigDecimal price, Category category, Integer quantity) {
+        this.id = id;
         setName(name);
         setDescription(description);
         setPrice(price);
