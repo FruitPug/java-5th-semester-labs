@@ -54,21 +54,21 @@ public class CustomerOrderRepositoryImpl implements CustomerOrderRepository {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<CustomerOrder> findById(Long id) {
         return jpaCustomerOrderRepository.findById(id)
                 .map(customerOrderMapper::toDomain);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<CustomerOrder> findByOrderNumber(String orderNumber) {
         return jpaCustomerOrderRepository.findByOrderNumber(orderNumber)
                 .map(customerOrderMapper::toDomain);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MostPurchasedProduct> findMostPurchasedProducts() {
         return jpaCustomerOrderRepository.findMostPurchasedProducts(
                 List.of(OrderStatus.PAID, OrderStatus.SHIPPED)
