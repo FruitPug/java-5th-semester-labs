@@ -10,7 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.net.URI;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -53,7 +53,7 @@ public class GlobalExceptionHandlerTest {
 
     @Test
     void handleProductNotFound_ShouldReturnNotFound_WithErrorDetails() {
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
         request.setRequestURI("/api/v1/products/" + productId);
         ProductNotFoundException exception = new ProductNotFoundException(productId);
 
@@ -73,7 +73,7 @@ public class GlobalExceptionHandlerTest {
 
     @Test
     void handleCategoryNotFound_ShouldReturnNotFound_WithErrorDetails() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
         request.setRequestURI("/api/v1/categories/" + categoryId);
         CategoryNotFoundException exception = new CategoryNotFoundException(categoryId);
 

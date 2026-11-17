@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-add-constraints
+      author: admin
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: products
+            baseColumnNames: category_id
+            constraintName: fk_product_category
+            referencedTableName: categories
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: order_id
+            constraintName: fk_order_item_order
+            referencedTableName: customer_orders
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: product_id
+            constraintName: fk_order_item_product
+            referencedTableName: products
+            referencedColumnNames: id
+
+        - addUniqueConstraint:
+            tableName: products
+            columnNames: category_id, name
+            constraintName: uq_product_category_name
+
+        - addUniqueConstraint:
+            tableName: categories
+            columnNames: name
+            constraintName: uq_category_name

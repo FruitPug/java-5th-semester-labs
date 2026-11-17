@@ -4,7 +4,7 @@ package com.example.lab1.application.service;
 import com.example.lab1.application.dto.request.CreateProductRequest;
 import com.example.lab1.application.dto.request.UpdateProductRequest;
 import com.example.lab1.application.dto.response.ProductDto;
-import com.example.lab1.application.mapper.ProductMapper;
+import com.example.lab1.application.mapper.ProductApplicationMapper;
 import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.model.Product;
 import com.example.lab1.domain.repository.CategoryRepository;
@@ -24,7 +24,7 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -42,11 +42,11 @@ public class ProductServiceTest {
     private CategoryRepository categoryRepository;
 
     @Mock
-    private ProductMapper productMapper;
+    private ProductApplicationMapper productMapper;
 
     @Test
     void createProduct_ShouldReturnProductDto() {
-        Category category = new Category("Electronics");
+        Category category = new Category(1L, "Electronics");
         CreateProductRequest request = new CreateProductRequest();
         request.setName("Cosmic Laser");
         request.setDescription("A powerful cosmic tool");
@@ -54,7 +54,7 @@ public class ProductServiceTest {
         request.setCategoryId(category.getId());
         request.setQuantity(15);
 
-        Product product = new Product("Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
+        Product product = new Product(2L, "Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
 
         ProductDto expectedDto = ProductDto.builder()
                 .id(product.getId())
@@ -81,7 +81,7 @@ public class ProductServiceTest {
 
     @Test
     void createProduct_ShouldThrowCategoryNotFoundException_WhenCategoryDoesNotExist() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
         CreateProductRequest request = new CreateProductRequest();
         request.setName("Cosmic Laser");
         request.setDescription("A powerful cosmic tool");
@@ -99,9 +99,9 @@ public class ProductServiceTest {
 
     @Test
     void getAllProducts_ShouldReturnPageOfProductDto() {
-        Category category = new Category("Electronics");
-        Product product1 = new Product("Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
-        Product product2 = new Product("Galaxy Vacuum", "Description", BigDecimal.valueOf(250), category, 10);
+        Category category = new Category(1L, "Electronics");
+        Product product1 = new Product(2L, "Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
+        Product product2 = new Product(3L, "Galaxy Vacuum", "Description", BigDecimal.valueOf(250), category, 10);
 
         ProductDto expectedProduct1Dto = ProductDto.builder()
                 .id(product1.getId())
@@ -136,8 +136,8 @@ public class ProductServiceTest {
 
     @Test
     void getProductById_ShouldReturnProductDto() {
-        Category category = new Category("Electronics");
-        Product product = new Product("Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
+        Category category = new Category(1L, "Electronics");
+        Product product = new Product(2L, "Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
 
         ProductDto expectedProductDto = ProductDto.builder()
                 .id(product.getId())
@@ -160,23 +160,23 @@ public class ProductServiceTest {
 
     @Test
     void getProductById_ShouldThrowProductNotFoundException_WhenProductDoesNotExist() {
-        UUID randomUUID = UUID.randomUUID();
+        Long randomLong = 1L;
 
-        when(productRepository.findById(randomUUID)).thenReturn(Optional.empty());
+        when(productRepository.findById(randomLong)).thenReturn(Optional.empty());
 
         ProductNotFoundException exception = assertThrows(
                 ProductNotFoundException.class,
-                () -> productService.getProductById(randomUUID)
+                () -> productService.getProductById(randomLong)
         );
 
-        assertTrue(exception.getMessage().contains(randomUUID.toString()));
-        verify(productRepository).findById(randomUUID);
+        assertTrue(exception.getMessage().contains(randomLong.toString()));
+        verify(productRepository).findById(randomLong);
     }
 
     @Test
     void updateProduct_ShouldReturnProductDto() {
-        Category category = new Category("Electronics");
-        Product product = new Product("Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
+        Category category = new Category(1L, "Electronics");
+        Product product = new Product(2L, "Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
         UpdateProductRequest request = new UpdateProductRequest();
         request.setName("Updated Name");
         request.setDescription("An updated description");
@@ -218,8 +218,8 @@ public class ProductServiceTest {
 
     @Test
     void updateProduct_ShouldThrowProductNotFoundException_WhenProductDoesNotExist() {
-        UUID productId = UUID.randomUUID();
-        Category category = new Category("Electronics");
+        Long productId = 1L;
+        Category category = new Category(2L, "Electronics");
         UpdateProductRequest request = new UpdateProductRequest();
         request.setName("Updated Name");
         request.setDescription("An updated description");
@@ -240,9 +240,9 @@ public class ProductServiceTest {
 
     @Test
     void updateProduct_ShouldThrowCategoryNotFoundException_WhenCategoryDoesNotExist() {
-        UUID categoryId = UUID.randomUUID();
-        Category category = new Category("Electronics");
-        Product product = new Product("Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
+        Long categoryId = 1L;
+        Category category = new Category(2L, "Electronics");
+        Product product = new Product(3L, "Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
         UpdateProductRequest request = new UpdateProductRequest();
         request.setName("Updated Name");
         request.setDescription("An updated description");
@@ -265,8 +265,8 @@ public class ProductServiceTest {
 
     @Test
     void deleteProduct_ShouldNotThrowAnything() {
-        Category category = new Category("Electronics");
-        Product product = new Product("Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
+        Category category = new Category(1L, "Electronics");
+        Product product = new Product(2L, "Cosmic Laser", "A powerful cosmic tool", BigDecimal.valueOf(199.99), category, 15);
 
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
         doNothing().when(productRepository).deleteById(product.getId());
@@ -278,7 +278,7 @@ public class ProductServiceTest {
 
     @Test
     void deleteProduct_ShouldThrowProductNotFoundException_WhenProductDoesNotExist() {
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
 
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 

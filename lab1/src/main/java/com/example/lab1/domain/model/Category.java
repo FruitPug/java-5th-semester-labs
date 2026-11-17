@@ -2,15 +2,13 @@ package com.example.lab1.domain.model;
 
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 public class Category {
-    private final UUID id;
+    private final Long id;
     private final String name;
 
-    public Category(String name) {
-        this.id = UUID.randomUUID();
+    public Category(Long id, String name) {
+        this.id = id;
         this.name = name;
     }
 }

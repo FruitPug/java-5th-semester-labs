@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CategoryMapperTest {
+public class CategoryApplicationMapperTest {
 
-    private final CategoryMapper categoryMapper = new CategoryMapperImpl();
+    private final CategoryApplicationMapper categoryMapper = new CategoryApplicationMapperImpl();
 
     @Test
     void toDto_ShouldMapCategoryToCategoryDto() {
-        Category category = new Category("Electronics");
+        Category category = new Category(1L, "Electronics");
 
         CategoryDto dto = categoryMapper.toDto(category);
 
@@ -37,7 +37,7 @@ public class CategoryMapperTest {
         Category category = categoryMapper.toDomain(request);
 
         assertNotNull(category);
-        assertNotNull(category.getId());
+        assertNull(category.getId());
         assertEquals(request.getName(), category.getName());
     }
 

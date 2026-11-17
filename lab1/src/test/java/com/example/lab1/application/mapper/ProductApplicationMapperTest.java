@@ -8,18 +8,19 @@ import com.example.lab1.domain.model.Product;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProductMapperTest {
+public class ProductApplicationMapperTest {
 
-    private final ProductMapper productMapper = new ProductMapperImpl();
+    private final ProductApplicationMapper productMapper = new ProductApplicationMapperImpl();
 
     @Test
     void toDto_ShouldMapProductToProductDto() {
-        Category category = new Category("Electronics");
+        Category category = new Category(1L, "Electronics");
         Product product = new Product(
+                2L,
                 "Cosmic Laser",
                 "A powerful cosmic tool",
                 BigDecimal.valueOf(199.99),
@@ -47,7 +48,7 @@ public class ProductMapperTest {
 
     @Test
     void toDomain_FromCreateRequest_ShouldMapToProduct() {
-        Category category = new Category("Electronics");
+        Category category = new Category(1L, "Electronics");
         CreateProductRequest request = new CreateProductRequest();
         request.setName("Cosmic Laser");
         request.setDescription("A powerful cosmic tool");
@@ -58,7 +59,7 @@ public class ProductMapperTest {
         Product product = productMapper.toDomain(request, category);
 
         assertNotNull(product);
-        assertNotNull(product.getId());
+        assertNull(product.getId());
         assertEquals(request.getName(), product.getName());
         assertEquals(request.getDescription(), product.getDescription());
         assertEquals(request.getPrice(), product.getPrice());
@@ -75,16 +76,17 @@ public class ProductMapperTest {
 
     @Test
     void toDomain_FromUpdateRequest_ShouldUpdateExistingProduct() {
-        Category initialCategory = new Category("Electronics");
-        Category updatedCategory = new Category("Gadgets");
+        Category initialCategory = new Category(1L, "Electronics");
+        Category updatedCategory = new Category(2L, "Gadgets");
         Product product = new Product(
+                3L,
                 "Cosmic Laser",
                 "A powerful cosmic tool",
                 BigDecimal.valueOf(199.99),
                 initialCategory,
                 15
         );
-        UUID originalProductId = product.getId();
+        Long originalProductId = product.getId();
 
         UpdateProductRequest request = new UpdateProductRequest();
         request.setName("Super Cosmic Laser");
@@ -106,8 +108,9 @@ public class ProductMapperTest {
 
     @Test
     void toDomain_FromUpdateRequest_ShouldReturnUnmodifiedProduct_WhenRequestAndCategoryAreNull() {
-        Category category = new Category("Electronics");
+        Category category = new Category(1L, "Electronics");
         Product product = new Product(
+                2L,
                 "Cosmic Laser",
                 "A powerful cosmic tool",
                 BigDecimal.valueOf(199.99),

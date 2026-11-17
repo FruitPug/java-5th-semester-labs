@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.net.URI;
 import java.util.stream.Collectors;
@@ -55,6 +56,39 @@ public class GlobalExceptionHandler {
                 URI.create(request.getRequestURI())
         );
 
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleMethodValidationException(
+            HandlerMethodValidationException exception,
+            HttpServletRequest request
+    ) {
+        if (exception.isForReturnValue()) {
+            return handleUnexpectedException(request);
+        }
+        ErrorResponse response = new ErrorResponse(
+                VALIDATION_ERROR,
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.value(),
+                "Request validation failed.",
+                URI.create(request.getRequestURI())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotFound(
+            OrderNotFoundException exception,
+            HttpServletRequest request
+    ) {
+        ErrorResponse response = new ErrorResponse(
+                NOT_FOUND_ERROR,
+                "Order not found",
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage(),
+                URI.create(request.getRequestURI())
+        );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
