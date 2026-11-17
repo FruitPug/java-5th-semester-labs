@@ -24,10 +24,9 @@ public class CustomerOrderController {
 
     @PostMapping
     public ResponseEntity<CustomerOrder> createOrder(
-            @RequestParam @NotBlank String orderNumber,
             @RequestBody @NotEmpty List<@Valid CreateOrderItemRequest> items
     ) {
-        CustomerOrder createdOrder = customerOrderService.createOrder(orderNumber, items);
+        CustomerOrder createdOrder = customerOrderService.createOrder(items);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

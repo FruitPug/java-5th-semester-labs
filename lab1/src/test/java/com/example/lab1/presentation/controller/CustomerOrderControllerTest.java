@@ -30,40 +30,26 @@ class CustomerOrderControllerTest {
 
     @Test
     void createOrder_ShouldReturnCreatedOrder() {
-        String orderNumber = "ORDER-1";
         List<CreateOrderItemRequest> items = orderItems();
         CustomerOrder order = mock(CustomerOrder.class);
-        when(customerOrderService.createOrder(orderNumber, items)).thenReturn(order);
+        when(customerOrderService.createOrder(items)).thenReturn(order);
 
-        ResponseEntity<CustomerOrder> response = customerOrderController.createOrder(orderNumber, items);
+        ResponseEntity<CustomerOrder> response = customerOrderController.createOrder(items);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertSame(order, response.getBody());
-        verify(customerOrderService).createOrder(orderNumber, items);
-    }
-
-    @Test
-    void createOrder_ShouldPropagateDuplicateOrderNumber() {
-        String orderNumber = "ORDER-1";
-        List<CreateOrderItemRequest> items = orderItems();
-        IllegalArgumentException failure = new IllegalArgumentException("Order number already exists: " + orderNumber);
-        when(customerOrderService.createOrder(orderNumber, items)).thenThrow(failure);
-
-        assertSame(failure, assertThrows(IllegalArgumentException.class,
-                () -> customerOrderController.createOrder(orderNumber, items)));
-        verify(customerOrderService).createOrder(orderNumber, items);
+        verify(customerOrderService).createOrder(items);
     }
 
     @Test
     void createOrder_ShouldPropagateProductNotFound() {
-        String orderNumber = "ORDER-1";
         List<CreateOrderItemRequest> items = orderItems();
         ProductNotFoundException failure = new ProductNotFoundException(1L);
-        when(customerOrderService.createOrder(orderNumber, items)).thenThrow(failure);
+        when(customerOrderService.createOrder(items)).thenThrow(failure);
 
         assertSame(failure, assertThrows(ProductNotFoundException.class,
-                () -> customerOrderController.createOrder(orderNumber, items)));
-        verify(customerOrderService).createOrder(orderNumber, items);
+                () -> customerOrderController.createOrder(items)));
+        verify(customerOrderService).createOrder(items);
     }
 
     @Test

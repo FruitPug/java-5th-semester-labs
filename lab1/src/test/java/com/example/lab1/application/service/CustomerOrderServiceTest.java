@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -45,20 +46,21 @@ class CustomerOrderServiceTest {
         Product second = new Product(2L, "Second", "Description", new BigDecimal("7.00"), category, 10);
         CreateOrderItemRequest firstRequest = request(1L, 2);
         CreateOrderItemRequest secondRequest = request(2L, 3);
-        when(customerOrderRepository.findByOrderNumber("ORD-1")).thenReturn(Optional.empty());
         when(productRepository.findById(1L)).thenReturn(Optional.of(first));
         when(productRepository.findById(2L)).thenReturn(Optional.of(second));
         when(customerOrderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
         LocalDateTime before = LocalDateTime.now();
 
-        CustomerOrder result = customerOrderService.createOrder("ORD-1", List.of(firstRequest, secondRequest));
+        CustomerOrder result = customerOrderService.createOrder(List.of(firstRequest, secondRequest));
 
         LocalDateTime after = LocalDateTime.now();
         ArgumentCaptor<CustomerOrder> captor = ArgumentCaptor.forClass(CustomerOrder.class);
         verify(customerOrderRepository).save(captor.capture());
         assertSame(captor.getValue(), result);
         assertNull(result.getId());
-        assertEquals("ORD-1", result.getOrderNumber());
+        assertTrue(result.getOrderNumber().startsWith("ORD-"));
+        String uuid = result.getOrderNumber().substring(4);
+        assertEquals(UUID.fromString(uuid).toString().toUpperCase(), uuid);
         assertEquals(OrderStatus.PENDING, result.getStatus());
         assertFalse(result.getCreatedAt().isBefore(before));
         assertFalse(result.getCreatedAt().isAfter(after));
@@ -68,24 +70,24 @@ class CustomerOrderServiceTest {
     }
 
     @Test
-    void createOrder_ShouldRejectDuplicateBeforeLookingUpProducts() {
-        when(customerOrderRepository.findByOrderNumber("ORD-1")).thenReturn(Optional.of(mock(CustomerOrder.class)));
+    void createOrder_ShouldGenerateDifferentOrderNumbers() {
+        Product product = new Product(1L, "First", "Description", new BigDecimal("12.50"),
+                new Category(1L, "Category"), 10);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(customerOrderRepository.save(any(CustomerOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> customerOrderService.createOrder("ORD-1", List.of(request(1L, 1))));
+        CustomerOrder first = customerOrderService.createOrder(List.of(request(1L, 1)));
+        CustomerOrder second = customerOrderService.createOrder(List.of(request(1L, 1)));
 
-        assertTrue(exception.getMessage().contains("ORD-1"));
-        verifyNoInteractions(productRepository);
-        verify(customerOrderRepository, never()).save(any());
+        assertNotEquals(first.getOrderNumber(), second.getOrderNumber());
     }
 
     @Test
     void createOrder_ShouldNotSaveWhenProductIsMissing() {
-        when(customerOrderRepository.findByOrderNumber("ORD-1")).thenReturn(Optional.empty());
         when(productRepository.findById(42L)).thenReturn(Optional.empty());
 
         ProductNotFoundException exception = assertThrows(ProductNotFoundException.class,
-                () -> customerOrderService.createOrder("ORD-1", List.of(request(42L, 1))));
+                () -> customerOrderService.createOrder(List.of(request(42L, 1))));
 
         assertTrue(exception.getMessage().contains("42"));
         verify(customerOrderRepository, never()).save(any());
@@ -93,9 +95,7 @@ class CustomerOrderServiceTest {
 
     @Test
     void createOrder_ShouldNotSaveAnEmptyOrder() {
-        when(customerOrderRepository.findByOrderNumber("ORD-1")).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> customerOrderService.createOrder("ORD-1", List.of()));
+        assertThrows(IllegalArgumentException.class, () -> customerOrderService.createOrder(List.of()));
 
         verifyNoInteractions(productRepository);
         verify(customerOrderRepository, never()).save(any());

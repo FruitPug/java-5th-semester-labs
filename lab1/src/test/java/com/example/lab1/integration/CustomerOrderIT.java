@@ -18,6 +18,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -49,11 +50,10 @@ class CustomerOrderIT extends IntegrationTestBase {
         Long productId = product.getId();
 
         String response = mockMvc.perform(post("/api/orders")
-                        .param("orderNumber", "order-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(items(productId, 2)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.orderNumber").value("order-1"))
+                .andExpect(jsonPath("$.orderNumber").isString())
                 .andExpect(jsonPath("$.status").value("PENDING"))
                 .andExpect(jsonPath("$.createdAt").exists())
                 .andExpect(jsonPath("$.items[0].product.id").value(productId))
@@ -63,11 +63,16 @@ class CustomerOrderIT extends IntegrationTestBase {
 
         JsonNode created = objectMapper.readTree(response);
         long orderId = created.get("id").asLong();
+        String orderNumber = created.get("orderNumber").asString();
+        assertThat(orderNumber).startsWith("ORD-");
+        String uuid = orderNumber.substring(4);
+        assertThat(UUID.fromString(uuid).toString().toUpperCase()).isEqualTo(uuid);
         product.setPrice(new BigDecimal("20.00"));
         entityManager.flush();
         entityManager.clear();
 
         CustomerOrderEntity saved = orders.findById(orderId).orElseThrow();
+        assertThat(saved.getOrderNumber()).isEqualTo(orderNumber);
         assertThat(saved.getStatus()).isEqualTo(OrderStatus.PENDING);
         assertThat(saved.getItems()).hasSize(1);
         assertThat(saved.getItems().getFirst().getUnitPrice()).isEqualByComparingTo("12.50");
@@ -75,51 +80,57 @@ class CustomerOrderIT extends IntegrationTestBase {
 
         mockMvc.perform(get("/api/orders/{id}", orderId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.orderNumber").value("order-1"))
+                .andExpect(jsonPath("$.orderNumber").value(orderNumber))
                 .andExpect(jsonPath("$.items[0].unitPrice").value(12.50));
-        mockMvc.perform(get("/api/orders/number/{orderNumber}", "order-1"))
+        mockMvc.perform(get("/api/orders/number/{orderNumber}", orderNumber))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(orderId))
                 .andExpect(jsonPath("$.items[0].quantity").value(2));
     }
 
     @Test
-    void rejectsDuplicateOrderNumberWithoutCreatingAnotherOrder() throws Exception {
+    void createsMultipleOrdersWithDistinctGeneratedNumbers() throws Exception {
         Long productId = createProduct().getId();
-        mockMvc.perform(post("/api/orders").param("orderNumber", "duplicate")
+        String firstResponse = mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON).content(items(productId, 1)))
-                .andExpect(status().isCreated());
-        mockMvc.perform(post("/api/orders").param("orderNumber", "duplicate")
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        String secondResponse = mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON).content(items(productId, 1)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.detail").value("Order number already exists: duplicate"));
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+
+        String firstNumber = objectMapper.readTree(firstResponse).get("orderNumber").asString();
+        String secondNumber = objectMapper.readTree(secondResponse).get("orderNumber").asString();
+        assertThat(firstNumber).isNotEqualTo(secondNumber);
 
         entityManager.flush();
-        assertThat(orders.findAll()).hasSize(1);
+        assertThat(orders.findByOrderNumber(firstNumber)).isPresent();
+        assertThat(orders.findByOrderNumber(secondNumber)).isPresent();
     }
 
     @Test
     void rejectsMissingProductWithoutPersistingOrder() throws Exception {
         Long productId = createProduct().getId();
-        mockMvc.perform(post("/api/orders").param("orderNumber", "missing-product")
+        long countBefore = orders.count();
+        mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[{\"productId\":" + productId + ",\"quantity\":1},"
                                 + "{\"productId\":999999999,\"quantity\":1}]"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Product not found"));
 
-        assertThat(orders.findByOrderNumber("missing-product")).isEmpty();
+        assertThat(orders.count()).isEqualTo(countBefore);
     }
 
     @Test
     void rejectsInvalidOrderItems() throws Exception {
         Long productId = createProduct().getId();
+        long countBefore = orders.count();
         for (String body : new String[]{"[]", items(productId, 0), "[{\"quantity\":1}]"}) {
-            mockMvc.perform(post("/api/orders").param("orderNumber", "invalid")
+            mockMvc.perform(post("/api/orders")
                             .contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest());
         }
-        assertThat(orders.findByOrderNumber("invalid")).isEmpty();
+        assertThat(orders.count()).isEqualTo(countBefore);
     }
 
     @Test
