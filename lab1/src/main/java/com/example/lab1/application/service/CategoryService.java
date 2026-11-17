@@ -6,9 +6,9 @@ import com.example.lab1.application.mapper.CategoryApplicationMapper;
 import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.repository.CategoryRepository;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

@@ -12,9 +12,9 @@ import com.example.lab1.infrastructure.persistence.entity.ProductEntity;
 import com.example.lab1.infrastructure.persistence.repository.JpaCustomerOrderRepository;
 import com.example.lab1.infrastructure.persistence.repository.JpaProductRepository;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;

@@ -6,9 +6,9 @@ import com.example.lab1.domain.repository.CustomerOrderRepository;
 import com.example.lab1.domain.repository.ProductRepository;
 import com.example.lab1.presentation.exception.OrderNotFoundException;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
