@@ -6,13 +6,14 @@ import com.example.lab1.domain.repository.CustomerOrderRepository;
 import com.example.lab1.domain.repository.ProductRepository;
 import com.example.lab1.presentation.exception.OrderNotFoundException;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,16 +23,7 @@ public class CustomerOrderService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public CustomerOrder createOrder(
-            String orderNumber,
-            List<CreateOrderItemRequest> requests
-    ) {
-        if (customerOrderRepository.findByOrderNumber(orderNumber).isPresent()) {
-            throw new IllegalArgumentException(
-                    "Order number already exists: " + orderNumber
-            );
-        }
-
+    public CustomerOrder createOrder(List<CreateOrderItemRequest> requests) {
         List<OrderItem> items = new ArrayList<>();
 
         for (CreateOrderItemRequest request : requests) {
@@ -48,7 +40,7 @@ public class CustomerOrderService {
 
         CustomerOrder order = new CustomerOrder(
                 null,
-                orderNumber,
+                generateOrderNumber(),
                 LocalDateTime.now(),
                 OrderStatus.PENDING,
                 items
@@ -72,5 +64,11 @@ public class CustomerOrderService {
     @Transactional
     public List<MostPurchasedProduct> getMostPurchasedProducts() {
         return customerOrderRepository.findMostPurchasedProducts();
+    }
+
+    private String generateOrderNumber() {
+        return "ORD-" + UUID.randomUUID()
+                .toString()
+                .toUpperCase();
     }
 }

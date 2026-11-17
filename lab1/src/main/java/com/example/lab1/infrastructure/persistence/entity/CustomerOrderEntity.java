@@ -68,7 +68,12 @@ public class CustomerOrderEntity {
     }
 
     public void removeItem(OrderItemEntity item) {
-        items.remove(item);
-        item.setOrder(null);
+        if (item == null) {
+            throw new IllegalArgumentException("Order item must not be null");
+        }
+
+        if (items.remove(item)) {
+            item.setOrder(null);
+        }
     }
 }

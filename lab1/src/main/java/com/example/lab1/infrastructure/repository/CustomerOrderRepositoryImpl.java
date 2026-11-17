@@ -12,9 +12,9 @@ import com.example.lab1.infrastructure.persistence.entity.ProductEntity;
 import com.example.lab1.infrastructure.persistence.repository.JpaCustomerOrderRepository;
 import com.example.lab1.infrastructure.persistence.repository.JpaProductRepository;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,21 +54,21 @@ public class CustomerOrderRepositoryImpl implements CustomerOrderRepository {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<CustomerOrder> findById(Long id) {
         return jpaCustomerOrderRepository.findById(id)
                 .map(customerOrderMapper::toDomain);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<CustomerOrder> findByOrderNumber(String orderNumber) {
         return jpaCustomerOrderRepository.findByOrderNumber(orderNumber)
                 .map(customerOrderMapper::toDomain);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MostPurchasedProduct> findMostPurchasedProducts() {
         return jpaCustomerOrderRepository.findMostPurchasedProducts(
                 List.of(OrderStatus.PAID, OrderStatus.SHIPPED)
