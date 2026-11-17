@@ -3,6 +3,7 @@ package com.example.lab1.presentation.controller;
 import com.example.lab1.application.dto.request.CreateOrderItemRequest;
 import com.example.lab1.application.service.CustomerOrderService;
 import com.example.lab1.domain.model.CustomerOrder;
+import com.example.lab1.domain.model.MostPurchasedProduct;
 import com.example.lab1.presentation.exception.OrderNotFoundException;
 import com.example.lab1.presentation.exception.ProductNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -111,6 +112,31 @@ class CustomerOrderControllerTest {
         assertSame(failure, assertThrows(OrderNotFoundException.class,
                 () -> customerOrderController.getOrderByNumber(orderNumber)));
         verify(customerOrderService).getOrderByNumber(orderNumber);
+    }
+
+    @Test
+    void getMostPurchasedProducts_ShouldReturnReport() {
+        MostPurchasedProduct first = mock(MostPurchasedProduct.class);
+        MostPurchasedProduct second = mock(MostPurchasedProduct.class);
+        List<MostPurchasedProduct> products = List.of(first, second);
+        when(customerOrderService.getMostPurchasedProducts()).thenReturn(products);
+
+        ResponseEntity<List<MostPurchasedProduct>> response = customerOrderController.getMostPurchasedProducts();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertSame(products, response.getBody());
+        verify(customerOrderService).getMostPurchasedProducts();
+    }
+
+    @Test
+    void getMostPurchasedProducts_ShouldReturnOkForEmptyReport() {
+        when(customerOrderService.getMostPurchasedProducts()).thenReturn(List.of());
+
+        ResponseEntity<List<MostPurchasedProduct>> response = customerOrderController.getMostPurchasedProducts();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(List.of(), response.getBody());
+        verify(customerOrderService).getMostPurchasedProducts();
     }
 
     private List<CreateOrderItemRequest> orderItems() {

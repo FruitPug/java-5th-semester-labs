@@ -3,6 +3,7 @@ package com.example.lab1.application.service;
 import com.example.lab1.application.dto.request.CreateOrderItemRequest;
 import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.model.CustomerOrder;
+import com.example.lab1.domain.model.MostPurchasedProduct;
 import com.example.lab1.domain.model.OrderItem;
 import com.example.lab1.domain.model.OrderStatus;
 import com.example.lab1.domain.model.Product;
@@ -134,6 +135,26 @@ class CustomerOrderServiceTest {
         OrderNotFoundException exception = assertThrows(OrderNotFoundException.class,
                 () -> customerOrderService.getOrderByNumber("missing"));
         assertTrue(exception.getMessage().contains("missing"));
+    }
+
+    @Test
+    void getMostPurchasedProducts_ShouldReturnRepositoryResultsInOrder() {
+        MostPurchasedProduct first = mock(MostPurchasedProduct.class);
+        MostPurchasedProduct second = mock(MostPurchasedProduct.class);
+        List<MostPurchasedProduct> products = List.of(first, second);
+        when(customerOrderRepository.findMostPurchasedProducts()).thenReturn(products);
+
+        assertSame(products, customerOrderService.getMostPurchasedProducts());
+        verify(customerOrderRepository).findMostPurchasedProducts();
+        verifyNoInteractions(productRepository);
+    }
+
+    @Test
+    void getMostPurchasedProducts_ShouldReturnEmptyResults() {
+        when(customerOrderRepository.findMostPurchasedProducts()).thenReturn(List.of());
+
+        assertTrue(customerOrderService.getMostPurchasedProducts().isEmpty());
+        verify(customerOrderRepository).findMostPurchasedProducts();
     }
 
     private static CreateOrderItemRequest request(Long productId, int quantity) {

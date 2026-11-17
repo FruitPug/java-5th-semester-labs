@@ -1,10 +1,7 @@
 package com.example.lab1.application.service;
 
 import com.example.lab1.application.dto.request.CreateOrderItemRequest;
-import com.example.lab1.domain.model.CustomerOrder;
-import com.example.lab1.domain.model.OrderItem;
-import com.example.lab1.domain.model.OrderStatus;
-import com.example.lab1.domain.model.Product;
+import com.example.lab1.domain.model.*;
 import com.example.lab1.domain.repository.CustomerOrderRepository;
 import com.example.lab1.domain.repository.ProductRepository;
 import com.example.lab1.presentation.exception.OrderNotFoundException;
@@ -70,5 +67,10 @@ public class CustomerOrderService {
     public CustomerOrder getOrderByNumber(String orderNumber) {
         return customerOrderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new OrderNotFoundException(orderNumber));
+    }
+
+    @Transactional
+    public List<MostPurchasedProduct> getMostPurchasedProducts() {
+        return customerOrderRepository.findMostPurchasedProducts();
     }
 }

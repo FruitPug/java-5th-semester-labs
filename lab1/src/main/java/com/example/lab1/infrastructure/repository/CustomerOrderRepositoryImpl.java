@@ -1,7 +1,9 @@
 package com.example.lab1.infrastructure.repository;
 
 import com.example.lab1.domain.model.CustomerOrder;
+import com.example.lab1.domain.model.MostPurchasedProduct;
 import com.example.lab1.domain.model.OrderItem;
+import com.example.lab1.domain.model.OrderStatus;
 import com.example.lab1.domain.repository.CustomerOrderRepository;
 import com.example.lab1.infrastructure.mapper.CustomerOrderInfrastructureMapper;
 import com.example.lab1.infrastructure.persistence.entity.CustomerOrderEntity;
@@ -14,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -62,5 +65,13 @@ public class CustomerOrderRepositoryImpl implements CustomerOrderRepository {
     public Optional<CustomerOrder> findByOrderNumber(String orderNumber) {
         return jpaCustomerOrderRepository.findByOrderNumber(orderNumber)
                 .map(customerOrderMapper::toDomain);
+    }
+
+    @Override
+    @Transactional
+    public List<MostPurchasedProduct> findMostPurchasedProducts() {
+        return jpaCustomerOrderRepository.findMostPurchasedProducts(
+                List.of(OrderStatus.PAID, OrderStatus.SHIPPED)
+        );
     }
 }

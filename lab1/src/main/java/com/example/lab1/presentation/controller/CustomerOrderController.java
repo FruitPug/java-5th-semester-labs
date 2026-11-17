@@ -3,6 +3,7 @@ package com.example.lab1.presentation.controller;
 import com.example.lab1.application.dto.request.CreateOrderItemRequest;
 import com.example.lab1.application.service.CustomerOrderService;
 import com.example.lab1.domain.model.CustomerOrder;
+import com.example.lab1.domain.model.MostPurchasedProduct;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -48,6 +49,13 @@ public class CustomerOrderController {
     ) {
         return ResponseEntity.ok(
                 customerOrderService.getOrderByNumber(orderNumber)
+        );
+    }
+
+    @GetMapping("/reports/most-purchased-products")
+    public ResponseEntity<List<MostPurchasedProduct>> getMostPurchasedProducts() {
+        return ResponseEntity.ok(
+                customerOrderService.getMostPurchasedProducts()
         );
     }
 }
