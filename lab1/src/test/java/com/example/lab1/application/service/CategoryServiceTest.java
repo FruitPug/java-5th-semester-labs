@@ -2,7 +2,7 @@ package com.example.lab1.application.service;
 
 import com.example.lab1.application.dto.request.CreateCategoryRequest;
 import com.example.lab1.application.dto.response.CategoryDto;
-import com.example.lab1.application.mapper.CategoryMapper;
+import com.example.lab1.application.mapper.CategoryApplicationMapper;
 import com.example.lab1.domain.model.Category;
 import com.example.lab1.domain.repository.CategoryRepository;
 import com.example.lab1.presentation.exception.CategoryNotFoundException;
@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -29,14 +29,14 @@ public class CategoryServiceTest {
     private CategoryRepository categoryRepository;
 
     @Mock
-    private CategoryMapper categoryMapper;
+    private CategoryApplicationMapper categoryMapper;
 
     @Test
     void createCategory_ShouldReturnCategoryDto() {
         CreateCategoryRequest request = new CreateCategoryRequest();
         request.setName("Electronics");
 
-        Category category = new Category("Electronics");
+        Category category = new Category(1L, "Electronics");
         CategoryDto expectedDto = CategoryDto.builder()
                 .id(category.getId())
                 .name(category.getName())
@@ -56,7 +56,7 @@ public class CategoryServiceTest {
 
     @Test
     void getCategoryById_ShouldReturnCategoryDto() {
-        Category category = new Category("Electronics");
+        Category category = new Category(1L, "Electronics");
         CategoryDto expectedDto = CategoryDto.builder()
                 .id(category.getId())
                 .name(category.getName())
@@ -74,16 +74,16 @@ public class CategoryServiceTest {
 
     @Test
     void getCategoryById_ShouldThrowCategoryNotFoundException_WhenCategoryDoesNotExist() {
-        UUID randomUUID = UUID.randomUUID();
+        Long randomLong = 1L;
 
-        when(categoryRepository.findById(randomUUID)).thenReturn(Optional.empty());
+        when(categoryRepository.findById(randomLong)).thenReturn(Optional.empty());
 
         CategoryNotFoundException exception = assertThrows(
                 CategoryNotFoundException.class,
-                () -> categoryService.getCategoryById(randomUUID)
+                () -> categoryService.getCategoryById(randomLong)
         );
 
-        assertTrue(exception.getMessage().contains(randomUUID.toString()));
-        verify( categoryRepository).findById(randomUUID);
+        assertTrue(exception.getMessage().contains(randomLong.toString()));
+        verify( categoryRepository).findById(randomLong);
     }
 }

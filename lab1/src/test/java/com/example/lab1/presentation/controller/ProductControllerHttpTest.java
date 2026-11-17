@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.UUID;
+
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,7 +29,7 @@ class ProductControllerHttpTest {
 
     @Test
     void getById_ShouldReturnNotFoundProblem_WhenProductDoesNotExist() throws Exception {
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
 
         when(productService.getProductById(productId))
                 .thenThrow(new ProductNotFoundException(productId));

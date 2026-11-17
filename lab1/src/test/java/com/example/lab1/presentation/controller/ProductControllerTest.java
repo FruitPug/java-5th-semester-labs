@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,7 +36,7 @@ public class ProductControllerTest {
 
     @Test
     void save_ShouldReturnCreatedProductDto() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
         CreateProductRequest request = new CreateProductRequest();
         request.setName("Cosmic Laser");
         request.setDescription("A powerful cosmic tool");
@@ -45,7 +45,7 @@ public class ProductControllerTest {
         request.setQuantity(15);
 
         ProductDto expectedDto = ProductDto.builder()
-                .id(UUID.randomUUID())
+                .id(1L)
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
@@ -65,7 +65,7 @@ public class ProductControllerTest {
 
     @Test
     void save_ShouldThrowCategoryNotFoundException_WhenCategoryDoesNotExist() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
         CreateProductRequest request = new CreateProductRequest();
         request.setName("Cosmic Laser");
         request.setDescription("A powerful cosmic tool");
@@ -87,9 +87,9 @@ public class ProductControllerTest {
 
     @Test
     void getAll_ShouldReturnPageOfProductDto() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
         ProductDto product1 = ProductDto.builder()
-                .id(UUID.randomUUID())
+                .id(1L)
                 .name("Cosmic Laser")
                 .description("A powerful cosmic tool")
                 .price(BigDecimal.valueOf(199.99))
@@ -98,7 +98,7 @@ public class ProductControllerTest {
                 .build();
 
         ProductDto product2 = ProductDto.builder()
-                .id(UUID.randomUUID())
+                .id(2L)
                 .name("Galaxy Vacuum")
                 .description("Description")
                 .price(BigDecimal.valueOf(250))
@@ -121,10 +121,10 @@ public class ProductControllerTest {
 
     @Test
     void getAll_ShouldReturnRequestedPage() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
 
         ProductDto product = ProductDto.builder()
-                .id(UUID.randomUUID())
+                .id(1L)
                 .name("Galaxy Vacuum")
                 .description("Description")
                 .price(BigDecimal.valueOf(250))
@@ -153,13 +153,13 @@ public class ProductControllerTest {
 
     @Test
     void getById_ShouldReturnProductDto() {
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
         ProductDto expectedDto = ProductDto.builder()
                 .id(productId)
                 .name("Cosmic Laser")
                 .description("A powerful cosmic tool")
                 .price(BigDecimal.valueOf(199.99))
-                .categoryId(UUID.randomUUID())
+                .categoryId(1L)
                 .quantity(15)
                 .build();
 
@@ -175,7 +175,7 @@ public class ProductControllerTest {
 
     @Test
     void getById_ShouldThrowProductNotFoundException_WhenProductDoesNotExist() {
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
 
         when(productService.getProductById(productId))
                 .thenThrow(new ProductNotFoundException(productId));
@@ -191,8 +191,8 @@ public class ProductControllerTest {
 
     @Test
     void update_ShouldReturnProductDto() {
-        UUID productId = UUID.randomUUID();
-        UUID categoryId = UUID.randomUUID();
+        Long productId = 1L;
+        Long categoryId = 2L;
         UpdateProductRequest request = new UpdateProductRequest();
         request.setName("Updated Name");
         request.setDescription("An updated description");
@@ -221,8 +221,8 @@ public class ProductControllerTest {
 
     @Test
     void update_ShouldThrowProductNotFoundException_WhenProductDoesNotExist() {
-        UUID productId = UUID.randomUUID();
-        UUID categoryId = UUID.randomUUID();
+        Long productId = 1L;
+        Long categoryId = 2L;
         UpdateProductRequest request = new UpdateProductRequest();
         request.setName("Updated Name");
         request.setDescription("An updated description");
@@ -244,8 +244,8 @@ public class ProductControllerTest {
 
     @Test
     void update_ShouldThrowCategoryNotFoundException_WhenCategoryDoesNotExist() {
-        UUID productId = UUID.randomUUID();
-        UUID categoryId = UUID.randomUUID();
+        Long productId = 1L;
+        Long categoryId = 2L;
         UpdateProductRequest request = new UpdateProductRequest();
         request.setName("Updated Name");
         request.setDescription("An updated description");
@@ -267,7 +267,7 @@ public class ProductControllerTest {
 
     @Test
     void deleteById_ShouldReturnNoContent() {
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
 
         doNothing().when(productService).deleteProduct(productId);
 
@@ -281,7 +281,7 @@ public class ProductControllerTest {
 
     @Test
     void deleteById_ShouldThrowProductNotFoundException_WhenProductDoesNotExist() {
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
 
         doThrow(new ProductNotFoundException(productId))
                 .when(productService).deleteProduct(productId);

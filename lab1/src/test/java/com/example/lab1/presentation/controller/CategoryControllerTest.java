@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,7 +34,7 @@ public class CategoryControllerTest {
         request.setName("Electronics");
 
         CategoryDto expectedDto = CategoryDto.builder()
-                .id(UUID.randomUUID())
+                .id(1L)
                 .name(request.getName())
                 .build();
 
@@ -50,7 +50,7 @@ public class CategoryControllerTest {
 
     @Test
     void getById_ShouldReturnCategoryDto() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
         CategoryDto expectedDto = CategoryDto.builder()
                 .id(categoryId)
                 .name("Electronics")
@@ -68,7 +68,7 @@ public class CategoryControllerTest {
 
     @Test
     void getById_ShouldThrowCategoryNotFoundException_WhenCategoryDoesNotExist() {
-        UUID categoryId = UUID.randomUUID();
+        Long categoryId = 1L;
 
         when(categoryService.getCategoryById(categoryId))
                 .thenThrow(new CategoryNotFoundException(categoryId));
